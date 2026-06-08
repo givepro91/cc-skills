@@ -1,0 +1,11 @@
+{
+  "name": "cc-skills",
+  "owner": { "name": "Jay (Spacewalk)", "email": "jay@spacewalk.tech" },
+  "plugins": [
+    {
+      "name": "claude-md",
+      "source": "./plugins/claude-md",
+      "description": "Generate and maintain a high-quality CLAUDE.md (Karpathy discipline + Anthropic best-practices + adaptive parallel-git workflow) via an idempotent managed block, plus /learn — append a rule whenever Claude makes a mistake (compounding engineering)."
+    }
+  ]
+}
