@@ -1,6 +1,8 @@
 #!/usr/bin/env node
-// Idempotently upsert the CC-RULES managed block into a target file (CLAUDE.md).
-// Usage: node apply-block.mjs <file>     (block body is read from stdin)
+// Idempotently upsert (or remove) the CC-RULES managed block in a target file.
+//   Upsert: node apply-block.mjs <file>            (block body read from stdin)
+//   Remove: node apply-block.mjs --remove <file>   (deletes the block; used when moving it
+//                                                    to a different canonical file)
 //
 // Guarantees:
 // - Existing file with a CC-RULES block      → replace only that block (user area preserved).
@@ -20,9 +22,27 @@ const NOTE = '<!-- Managed by /claude-md. Edits inside this block are overwritte
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const lineRe = (marker) => new RegExp(`^${esc(marker)}[ \\t]*$`, 'm'); // whole-line match only
 
-const file = process.argv[2];
-if (!file) { console.error('usage: apply-block.mjs <file>  (block body on stdin)'); process.exit(2); }
+const argv = process.argv.slice(2);
+const remove = argv[0] === '--remove';
+const file = remove ? argv[1] : argv[0];
+if (!file) { console.error('usage: apply-block.mjs [--remove] <file>  (block body on stdin for upsert)'); process.exit(2); }
 
+// ---------- remove mode ----------
+if (remove) {
+  if (!existsSync(file)) { console.log(`${file} not found — nothing to remove`); process.exit(0); }
+  const text = readFileSync(file, 'utf8');
+  const sm = lineRe(START).exec(text);
+  const em = lineRe(END).exec(text);
+  if (!(sm && em && em.index > sm.index)) { console.log(`no CC-RULES block in ${file}`); process.exit(0); }
+  const before = text.slice(0, sm.index).replace(/\s+$/, '');
+  const after = text.slice(em.index + em[0].length).replace(/^\s+/, '');
+  const joined = before && after ? `${before}\n\n${after}\n` : before ? `${before}\n` : after ? `${after}\n` : '';
+  writeFileSync(file, joined);
+  console.log(`removed CC-RULES block from ${file}`);
+  process.exit(0);
+}
+
+// ---------- upsert mode ----------
 let body = '';
 try { body = readFileSync(0, 'utf8'); } catch { /* empty */ }
 body = body.replace(/^\n+|\n+$/g, '');

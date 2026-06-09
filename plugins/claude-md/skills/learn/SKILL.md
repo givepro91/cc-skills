@@ -4,16 +4,16 @@ description: Capture a lesson from a mistake into CLAUDE.md's Self-Learning Rule
 when_to_use: When the user runs /learn, or right after a correction ("no, don't…", "again", "that's wrong", "always/never do X") that should become a durable rule.
 argument-hint: "[rule text]"
 disable-model-invocation: true
-allowed-tools: Read, Bash(git rev-parse*), Bash(node*)
+allowed-tools: Read, Bash(git rev-parse*), Bash(node*), Bash(readlink*), Bash(grep*)
 ---
 
 # /learn — append a rule from a mistake
 
-Turn a correction into a durable rule in `CLAUDE.md`'s **Self-Learning Rules**, so the next session doesn't repeat it. This is the "compounding engineering" loop: every mistake makes the rules sharper.
+Turn a correction into a durable rule in the canonical agent file's **Self-Learning Rules**, so the next session doesn't repeat it. This is the "compounding engineering" loop: every mistake makes the rules sharper.
 
 ## Procedure
 
-1. **Find CLAUDE.md.** Project root = `git rev-parse --show-toplevel` (fallback: cwd). Target = `<root>/CLAUDE.md`. If it has no `<!-- LEARN:ANCHOR -->`, tell the user to run `/claude-md` first (don't hand-edit).
+1. **Find the canonical agent file** (the one holding the `CC-RULES` block). Project root = `git rev-parse --show-toplevel` (fallback: cwd). Resolve the same way `/claude-md` does: a `CLAUDE.md` symlink → its target; `CLAUDE.md` importing `@AGENTS.md` (or AGENTS.md canonical) → `AGENTS.md`; only `AGENTS.md` → `AGENTS.md`; else `CLAUDE.md`. In practice: pick whichever of `CLAUDE.md` / `AGENTS.md` actually contains `<!-- LEARN:ANCHOR -->`. If neither has it, tell the user to run `/claude-md` first (don't hand-edit).
 2. **Determine the rule:**
    - If the user passed text after `/learn`, use that as the rule (lightly cleaned).
    - Otherwise, look at the **most recent correction** in this conversation — what Claude did wrong and what the user actually wanted — and distill it into **one** rule.
@@ -24,9 +24,9 @@ Turn a correction into a durable rule in `CLAUDE.md`'s **Self-Learning Rules**, 
    - Capture the *generalizable* lesson, not the one-off detail.
 4. **Append (deduped)** via the helper:
    ```sh
-   node "${CLAUDE_PLUGIN_ROOT}/scripts/append-rule.mjs" <root>/CLAUDE.md "<the one-line rule>"
+   node "${CLAUDE_PLUGIN_ROOT}/scripts/append-rule.mjs" <target file> "<the one-line rule>"
    ```
-   It inserts `- (YYYY-MM-DD) <rule>` after the anchor (newest first) and skips near-duplicates.
+   (`<target file>` = the canonical file resolved in step 1.) It inserts `- (YYYY-MM-DD) <rule>` after the anchor (newest first) and skips near-duplicates.
 5. **Confirm** the added line (or report it was a duplicate). Offer to commit (don't commit without approval).
 
 ## Examples

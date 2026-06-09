@@ -14,6 +14,8 @@ Two skills that make a repo's AI working rules consistent and self-improving:
   - **Parallel Git Workflow** — *adaptive*: `team` (issue → branch → worktree → PR), `solo` (branch/worktree per task, no PR ceremony), or `none` (not a git repo). One branch = one handoff if [cc-handoff](https://github.com/givepro91/cc-handoff) is installed.
   - **Self-Learning Rules** — a growing list, fed by `/learn`.
 
+  **Canonical-file aware:** writes the block to the file every agent on the repo reads. Default is `CLAUDE.md`; but if the repo is multi-tool — `CLAUDE.md` is a symlink to `AGENTS.md`, or imports it via `@AGENTS.md` (so Codex reads `AGENTS.md` too) — the block goes into **`AGENTS.md`** instead (with a confirm prompt), and `CLAUDE.md` stays the thin pointer. The block lives in exactly one file, never split or duplicated.
+
   Re-runnable: it only ever rewrites its own `<!-- CC-RULES:START -->…<!-- CC-RULES:END -->` block — your hand-written content (and any OMC block) is left untouched. Accumulated learned rules survive regeneration.
 
 - **`/learn`** — turn a mistake into a durable rule. After Claude does something wrong and you correct it, run `/learn`; it distills the correction into one concise rule and appends it (deduped) to the Self-Learning Rules. This is the "compounding engineering" loop — every mistake sharpens the rules, and they load every session because they live in `CLAUDE.md`.
