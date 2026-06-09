@@ -91,13 +91,13 @@ For the plain CLAUDE.md-only case, no confirmation is needed.
 
 ## Parallel Git Workflow
 <!-- variant: TEAM (git + remote + gh) -->
-- Never commit directly to the default branch (`main`/`master`). **One task = one ISSUE = one branch.**
-- For parallel local sessions, isolate with a **worktree per task**: `git worktree add ../<task> -b <branch>`.
+- Never work on or commit to the default branch (`main`/`master`). **One task = one ISSUE = one branch.**
+- **Create the branch/worktree BEFORE you start editing — not at commit time.** Isolate each task in its own **git worktree** (`git worktree add ../<task> -b <branch>`), or use your agent's native worktree support — **Claude Code provides worktrees** — so parallel sessions never share a checkout and never collide on `main`.
 - Open small, surgical PRs that reference the issue (e.g. "Fixes #42"); keep one concern per PR.
 - If cc-handoff is installed: **one branch = one handoff** (`docs/handoff/<branch>.md`).
 
 <!-- variant: SOLO (git, no remote/gh) — use instead of TEAM -->
-- Don't work on the default branch. **Branch per task** (`git switch -c <task>`); for parallel sessions use a **worktree per task**.
+- Don't work on or commit to the default branch. **Create a branch/worktree per task BEFORE editing — not at commit time** (`git switch -c <task>`, or `git worktree add ../<task> -b <task>`; **Claude Code provides native worktrees** for isolation).
 - Commit in small, focused steps with the *why* in the body. (No PR ceremony needed for a solo repo.)
 
 <!-- variant: NONE (not a git repo) — replace section body with this single line -->
