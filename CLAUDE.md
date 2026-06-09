@@ -29,5 +29,6 @@ A Claude Code **skills marketplace**. The `claude-md` plugin provides `/claude-m
 ## Self-Learning Rules
 <!-- Append one concise rule per correction. `/learn` writes here automatically; newest first. -->
 <!-- LEARN:ANCHOR -->
+- (2026-06-09) Write the managed rules block to the canonical agent file — AGENTS.md when the repo is multi-tool (CLAUDE.md imports @AGENTS.md or symlinks it) so Codex also reads it; never split or duplicate the block across files.
 - (2026-06-08) When a tool detects its own managed-block markers, match them as standalone lines so prose that merely mentions the marker text isn't mistaken for the block.
 <!-- CC-RULES:END -->
