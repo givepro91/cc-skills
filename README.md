@@ -1,5 +1,8 @@
 # cc-skills
 
+> [!WARNING]
+> **Deprecated — merged into [Nova](https://github.com/givepro91/nova).** `claude-md` + `/learn` now live in the unified `nova` marketplace: `/plugin marketplace add givepro91/nova`. This repo is kept for history; new development happens in Nova.
+
 > A small marketplace of [Claude Code](https://docs.claude.com/en/docs/claude-code) skills.
 
 ## Plugins
